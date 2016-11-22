@@ -203,7 +203,7 @@ int PortableNewlines;
                  && (Buf[0] == '-')
                  && (Buf[1] == '-')
                  && PendingBoundary(Buf, boundaries, boundaryct)) {
-                return;
+                return 0;
             }
             fprintf(stderr, "Ignoring unrecognized boundary line: %s\n", Buf);
             continue;
@@ -221,7 +221,7 @@ int PortableNewlines;
         } while (c4 != EOF && isspace(c4));
         if (c2 == EOF || c3 == EOF || c4 == EOF) {
             fprintf(stderr, "Warning: base64 decoder saw premature EOF!\n");
-            return;
+            return 0;
         }
         if (c1 == '=' || c2 == '=') {
             DataDone=1;
@@ -371,7 +371,7 @@ int *boundaryct;
                  && (Buf[0] == '-')
                  && (Buf[1] == '-')
                  && PendingBoundary(Buf, boundaries, boundaryct)) {
-                return;
+                return 0;
             }
             /* Not a boundary, now we must treat THIS line as q-p, sigh */
             if (neednewline) {

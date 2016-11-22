@@ -29,39 +29,6 @@ FILE *outfp;
 	putc (c3, outfp);
 }
 
-
-getline (buf, size, fp)
-char *buf;
-int size;
-FILE *fp;
-{
-    int c;
-    char *ptr = buf;
-
-    for (c = 0; c < size; ++c)
-	buf[c] = ' ';
-    do {
-	c = getc (fp);
-	if (c == EOF) {
-	    *ptr = '\0';
-	    return (ptr == buf) ? -1 : 0;
-	}
-	else if (c == '\n' || c == '\r') {
-	    *ptr = '\0';
-	    return 0;
-	}
-	else if (ptr == buf && c == '>') /* ">From" line hack */
-	    continue;
-	else if (size > 0) {
-	    *ptr++ = c;
-	    size--;
-	}
-    } while (1);
-    return
-(0); /* shut lint up */
-}
-
-
 fromuue (infp, outfp, boundaries, ctptr)
 FILE *infp, *outfp;
 char **boundaries;
@@ -72,26 +39,26 @@ int *ctptr;
     while (1) {
 	if (getline (buf, sizeof buf, infp) < 0) {
 	    fprintf (stderr, "Premature EOF!\n");
-	    return;
+	    return 1;
 	}
 	if (strncmp (buf, "begin", 5) == 0)
 	    break;
 	else if (buf[0] == '-' && buf[1] == '-') {
 	    if (boundaries && PendingBoundary (buf, boundaries, ctptr))
-		return;
+		return 0;
 	}
     }	
     while (1) {
 	if (getline (buf, sizeof buf, infp) < 0) {
 	    fprintf (stderr, "Premature EOF!\n");
-	    return;
+	    return 1;
 	}
 	else if (strncmp (buf, "end", 5) == 0)
 	    break;
 	else if (buf[0] == '-' && buf[1] == '-') {
 	    if (boundaries && PendingBoundary (buf, boundaries, ctptr)) {
 		fprintf (stderr, "premature end of x-uue body part\n");
-		return;
+		return 1;
 	    }
 	    else {
 		fprintf (stderr, "ignoring invalid boundary marker\n");

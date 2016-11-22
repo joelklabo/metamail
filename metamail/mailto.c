@@ -1072,7 +1072,7 @@ struct mailpart *FirstPart;
 #endif
     }
     fprintf(fp, "Message-ID: %s\n", newid());
-    if (!FirstPart) return; /* empty body */
+    if (!FirstPart) return 0; /* empty body */
     if (FirstPart->next) {
         char boundary[120];
 #ifdef AMIGA
@@ -1346,7 +1346,7 @@ int EightBitMode, RightToLeftMode;
         }
         part->isrich = 1;
         PartEndsWithNewline=1;
-        return;
+        return 0;
     }
     InNewLineSequence = 0;
     if (RightToLeftMode) {
@@ -1422,7 +1422,6 @@ int signum;
     if (signum == SIGINT) {
         if (V_ignore) {
             printf("Interrupt ignored because 'ignore' is set.  Use ~q if you want to quit.\n");
-            return;
         } else {
             (void) WriteDeadLetter();
         }
@@ -2109,7 +2108,7 @@ int UseVisual;
         fpout = fopen(FirstPart->filename, "a");
         free(CmdBuf);
         free(CmdBuf2);
-        return;
+        return 0;
     }
     lastmp = mp = FirstPart;
     while (mp) {
@@ -2221,7 +2220,7 @@ int IsAndrew;
     int LineAlloced = 0, LineCount = 0;
 
     fp = fopen(fname, "r");
-    if (!fp) return;
+    if (!fp) return 1;
     do {
         LineBuf=NextAliasLine(LineBuf, &LineAlloced, &LineCount, fp, IsAndrew);
         if (LineCount == 0) continue;
@@ -2310,7 +2309,7 @@ char *aliasline;
         if (s != s2) printf("mailto: ignoring bad alias line in init file: %s\n", aliasline);
         free(s);
         free(tmpalias);
-        return;
+        return 0;
     }
     *s2++ = '\0';
     tmpalias->shortname = s;
@@ -2364,7 +2363,7 @@ char *hdr;
 {
     char *firstnonascii, *firstascii;
 
-    if (!s) return;
+    if (!s) return 1;
     firstnonascii=firstbad(s);
     if (firstnonascii) {
         if (!strcmp(CharacterSet, "us-ascii")) {
@@ -2454,7 +2453,7 @@ char *hdr;
 /*        if (!lc2strcmp(name, tmpalias->shortname)) { */
             *end = savechar;
             EmitAddresses(fp, tmpalias->longname, hdr);
-            return;
+            return 0;
         }
     }
     *end = savechar;

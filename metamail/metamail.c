@@ -1915,18 +1915,18 @@ char *hdr;
             if (!strcmp(KeyHeadList[numkeys], "*")
                  || !lc2strncmp(hdr, KeyHeadList[numkeys], len)) {
 		if (!KeyKeep) phead(hdr);
-		return;
+		return 0;
             }
         }
 	if (KeyKeep) phead(hdr);
-	return;
+	return 0;
     }
     if (!strncmp(hdr, "From ", 5) || !strncmp(hdr, ">From ", 6)) {
 	for (numkeys = 0; KeyHeadList[numkeys]; ++numkeys) {
 	    if (!strcmp(KeyHeadList[numkeys], "*")
 		 || !lc2strncmp(">from", KeyHeadList[numkeys], 5)) {
 		if (!KeyKeep) phead(hdr);
-		return;
+		return 0;
 	    }
 	}
 	if (KeyKeep) phead(hdr);
@@ -2660,7 +2660,7 @@ PauseForUser() {
     char Buf[100];
 #endif
 
-    if (DefinitelyNotTty || MustNotBeTty) return;	
+    if (DefinitelyNotTty || MustNotBeTty) return 1;	
 #if defined(MSDOS) || defined(AMIGA)
     printf("Press RETURN to go on\n");
     gets(Buf);

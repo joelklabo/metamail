@@ -83,6 +83,17 @@ static outputc(), realoutputc(), MakeWorkingMargins(), Pause(), fputsmovingright
 
 #define	OUTC(c)		(outputc((RCHAR)(c)))
 
+static lc2strcmp(s1, s2)
+char *s1, *s2;
+{
+    if (!s1 || !s2) return (-1);
+    while (*s1 && *s2) {
+       if (*s1 != *s2 && (tolower(*s1) != *s2)) return(-1);
+       ++s1; ++s2;
+    }
+    return((*s1 == *s2) ? 0 : -1);
+}
+
 static void
 InitGlobals()
 {
@@ -910,7 +921,7 @@ struct charsetmember *s;
 FILE *fp;
 {
     int inmargin=1;
-    if (!s) return;
+    if (!s) return 0;
     while (s -> ch) {
         if (inmargin && (s -> ch) == ' ') {
             controloutput(MoveRight, 1);
@@ -932,7 +943,7 @@ char *standoutbuf, *standendbuf, *StartUnderline, *StopUnderline,
     *BoldOn, *BoldOff;
 {
     if (OverStrike)
-	return;
+	return 0;
 
     /* We always turn back on the appropriate terminal modes, because
       on some terminals one thing turns off all of them */
@@ -989,16 +1000,6 @@ FILE *fp;
     while(*s) (*RichtextPutc)((int)(*s++),fp);
 }
 
-static lc2strcmp(s1, s2)
-char *s1, *s2;
-{
-    if (!s1 || !s2) return (-1);
-    while (*s1 && *s2) {
-	if (*s1 != *s2 && (tolower(*s1) != *s2)) return(-1);
-	++s1; ++s2;
-    }
-    return((*s1 == *s2) ? 0 : -1);
-}
 
 static lc2strncmp(s1, s2, len)
 char *s1, *s2;
